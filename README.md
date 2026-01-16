@@ -43,7 +43,7 @@ A typical project looks like this:
 
 some-idea/
 ├── main.py | main.ipynb | main.js   # all actual code lives here
-├── README.md                        # what was tested, why, and what was learned
+├── explained.md                        # what was tested, why, and what was learned
 └── (optional files)                 # notes, outputs, generated files
 
 ```

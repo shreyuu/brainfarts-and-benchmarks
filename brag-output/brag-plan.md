@@ -37,13 +37,13 @@ URL that implies legitimacy: `github.com/shreyuu/brainfarts-and-benchmarks`
 
 ## Visual identity (from the project)
 No CSS in this repo — the identity comes from the project's real artifacts: the seaborn `whitegrid` notebook charts and the terminal where `main.py` and pytest run.
-- Background: `#FFFFFF` paper (seaborn whitegrid axes), with faint grid lines (seaborn grid `#CCCCCC`, softened for video)
+- Background: `#F7F8FB` paper (seaborn whitegrid white `#FFFFFF`, tinted toward the data blue so it isn't dead white), with whitegrid lines (seaborn grid `#CCCCCC`, softened to `#DCE1EA` for video)
 - Accent (data): `#4C72B0` (seaborn default "deep" blue — the notebook's line color)
-- Accent (math / expected line): `#FF0000` matplotlib "red", dashed (the notebook's cap line; may soften toward `#C44E52` seaborn red if pure red vibrates on video)
-- Text: `#262626` (seaborn ".15" ink)
-- Terminal cards: `#1E1E1E` background, `#D4D4D4` text (inferred: VS Code dark default — the repo lives in `~/VSCODE/Projects`), pass marks in `#55A868` (seaborn green)
-- Display font: IBM Plex Sans (heavy, sentence case — "research lab" seriousness). Notebook charts use Arial via seaborn's font stack; Plex is the closest serious sibling.
-- Body / data font: IBM Plex Mono (Courier-adjacent for data points, logs, terminal)
+- Accent (math / expected line): `#D62728` matplotlib `tab:red`, dashed — the notebook's cap line is `#FF0000`, which fails WCAG AA as text on paper (~4.0:1); tab:red keeps the matplotlib identity at ~4.9:1
+- Text: `#1E232D` (seaborn ".15" ink `#262626`, tinted toward the blue)
+- Terminal cards: `#1E1E1E` background, `#D4D4D4` text (inferred: VS Code dark default — the repo lives in `~/VSCODE/Projects`), pass marks in `#55A868` (seaborn green, dark cards only)
+- Display font: STIX Two Text — the typeface scientific journals are set in (OFL; embedded from the macOS system copy). Headlines read like a paper's title; the "research lab" register made literal. (Revised from IBM Plex Sans during composition: Plex Sans isn't bundled, and sans + mono is a weaker register switch than journal serif + instrument mono.)
+- Body / data font: IBM Plex Mono (bundled; Courier-adjacent for data points, logs, terminal)
 - Strongest visual element: the "Iterations per Simulation" chart with the 8,738 spike towering over the dashed 1,296 line
 - Brand marks: 🧠⚡ from the README title; `✔` from pytest's "hidden cases passed silently ✔"
 

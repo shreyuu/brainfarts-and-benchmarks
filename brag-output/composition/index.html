@@ -1,10 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=1920, height=1080" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>brainfarts-and-benchmarks — brag</title>
+    <!-- GSAP 3.14.2 vendored from the npm registry: no render-time CDN fetch -->
+    <script src="assets/vendor/gsap.min.js"></script>
+    <!-- Real data from how-long-until-dice-match/logs/5die_200sim_26-01-26_17-40-55.txt -->
+    <script src="assets/data.js"></script>
     <style>
+      /* STIX Two: the scientific-publishing typeface (SIL OFL 1.1), embedded locally. */
+      @font-face {
+        font-family: "STIX Two Text";
+        src: url("assets/fonts/STIXTwoText.ttf") format("truetype");
+        font-weight: 400 700;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "STIX Two Text";
+        src: url("assets/fonts/STIXTwoText-Italic.ttf") format("truetype");
+        font-weight: 400 700;
+        font-style: italic;
+      }
+      /* Math companion: supplies ≠ and ✓, which STIX Two Text does not carry. */
+      @font-face {
+        font-family: "STIX Two Math";
+        src: url("assets/fonts/STIXTwoMath.otf") format("opentype");
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      :root {
+        --paper: #f7f8fb; /* seaborn whitegrid white, tinted toward the data blue */
+        --grid: #dce1ea;
+        --rule: #c9d0dc;
+        --ink: #1e232d; /* seaborn ".15" ink */
+        --muted: #5a6272;
+        --blue: #4c72b0; /* seaborn deep C0 — the notebook's line color */
+        --red: #d62728; /* matplotlib tab:red — the notebook's dashed reference line */
+        --term: #1e1e1e;
+        --term-bar: #2b2b2b;
+        --term-fg: #d4d4d4;
+        --term-muted: #8a8f98;
+        --term-blue: #8fb0e3;
+        --term-green: #55a868; /* seaborn deep C2 */
+        --serif: "STIX Two Text", "STIX Two Math", serif;
+        --math: "STIX Two Math", "STIX Two Text", serif;
+        --mono: "IBM Plex Mono", monospace;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -12,44 +56,1104 @@
       }
       html,
       body {
-        margin: 0;
         width: 1920px;
         height: 1080px;
         overflow: hidden;
-        background: #0a0a0a;
+        background: var(--paper);
       }
       #root {
+        position: relative;
         width: 100%;
         height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--mono);
+      }
+
+      /* ---------- persistent paper layer ---------- */
+      #paper {
+        position: absolute;
+        inset: 0;
+      }
+      #grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, var(--grid) 2px, transparent 2px),
+          linear-gradient(to bottom, var(--grid) 2px, transparent 2px);
+        background-size: 120px 120px;
+      }
+      .reg {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+      }
+      .reg::before,
+      .reg::after {
+        content: "";
+        position: absolute;
+        background: var(--muted);
+      }
+      .reg::before {
+        left: 14px;
+        top: 0;
+        width: 2px;
+        height: 30px;
+      }
+      .reg::after {
+        left: 0;
+        top: 14px;
+        width: 30px;
+        height: 2px;
+      }
+      .reg.a {
+        left: 45px;
+        top: 45px;
+      }
+      .reg.b {
+        right: 45px;
+        top: 45px;
+      }
+      .reg.c {
+        left: 45px;
+        bottom: 45px;
+      }
+      .reg.d {
+        right: 45px;
+        bottom: 45px;
+      }
+      #topbar {
+        position: absolute;
+        left: 120px;
+        right: 120px;
+        top: 44px;
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font: 400 24px/1 var(--mono);
+        color: var(--muted);
+        white-space: pre;
+      }
+      #topRule {
+        position: absolute;
+        left: 120px;
+        right: 120px;
+        top: 100px;
+        height: 3px;
+        background: var(--rule);
+        transform-origin: 0 50%;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+      .neq,
+      .chk {
+        font-family: var(--math);
+      }
+      .neq {
+        color: var(--red);
+      }
+
+      /* ---------- dice (size-agnostic: pips are % of the face) ---------- */
+      .die-wrap {
+        width: 190px;
+        height: 190px;
+      }
+      .die {
+        --b: 5px;
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        border: var(--b) solid var(--ink);
+        border-radius: 18%;
+        box-shadow:
+          0 14px 0 -6px rgba(30, 35, 45, 0.12),
+          0 24px 44px rgba(30, 35, 45, 0.14);
+      }
+      .die.small {
+        --b: 4px;
+      }
+      .die.mini {
+        --b: 2.5px;
+        box-shadow: none;
+      }
+      .pip {
+        position: absolute;
+        width: 18.9%;
+        height: 18.9%;
+        border-radius: 50%;
+        background: var(--ink);
+        opacity: 0;
+      }
+      .die.match .pip {
+        background: var(--blue);
+      }
+      .pip.tl {
+        left: 12.8%;
+        top: 12.8%;
+      }
+      .pip.tr {
+        left: 68.3%;
+        top: 12.8%;
+      }
+      .pip.ml {
+        left: 12.8%;
+        top: 40.6%;
+      }
+      .pip.mc {
+        left: 40.6%;
+        top: 40.6%;
+      }
+      .pip.mr {
+        left: 68.3%;
+        top: 40.6%;
+      }
+      .pip.bl {
+        left: 12.8%;
+        top: 68.3%;
+      }
+      .pip.br {
+        left: 68.3%;
+        top: 68.3%;
+      }
+      .die[data-face="1"] .mc,
+      .die[data-face="2"] .tl,
+      .die[data-face="2"] .br,
+      .die[data-face="3"] .tl,
+      .die[data-face="3"] .mc,
+      .die[data-face="3"] .br,
+      .die[data-face="4"] .tl,
+      .die[data-face="4"] .tr,
+      .die[data-face="4"] .bl,
+      .die[data-face="4"] .br,
+      .die[data-face="5"] .tl,
+      .die[data-face="5"] .tr,
+      .die[data-face="5"] .mc,
+      .die[data-face="5"] .bl,
+      .die[data-face="5"] .br,
+      .die[data-face="6"] .tl,
+      .die[data-face="6"] .tr,
+      .die[data-face="6"] .ml,
+      .die[data-face="6"] .mr,
+      .die[data-face="6"] .bl,
+      .die[data-face="6"] .br {
+        opacity: 1;
+      }
+
+      /* ---------- scene 1: the question ---------- */
+      #s1-h1 {
+        position: absolute;
+        left: 120px;
+        top: 150px;
+        font: 600 132px/1.02 var(--serif);
+        letter-spacing: -0.025em;
+      }
+      #s1-h1 .ln {
+        display: block;
+      }
+      #s1-dice {
+        position: absolute;
+        left: 120px;
+        top: 560px;
+        display: flex;
+        gap: 36px;
+      }
+      #s1-logrow {
+        position: absolute;
+        left: 120px;
+        top: 806px;
+        font: 400 34px/1 var(--mono);
+        color: var(--muted);
+        white-space: pre;
+      }
+      #s1-counter {
+        position: absolute;
+        left: 1380px;
+        top: 540px;
+      }
+      .label {
+        font: 400 28px/1 var(--mono);
+        color: var(--muted);
+        letter-spacing: 0.04em;
+      }
+      #s1-count {
+        margin-top: 34px;
+        font: 700 150px/1 var(--mono);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.03em;
+      }
+      #s1-nomatch {
+        margin-top: 36px;
+        font: 700 34px/1 var(--mono);
+        color: var(--red);
+      }
+
+      /* ---------- scene 2: the prediction ---------- */
+      #s2-kicker {
+        position: absolute;
+        left: 124px;
+        top: 186px;
+        font: 600 84px/1 var(--serif);
+        color: var(--muted);
+      }
+      #s2-big {
+        position: absolute;
+        left: 112px;
+        top: 296px;
+        font: 700 220px/1 var(--serif);
+        letter-spacing: -0.035em;
+        white-space: nowrap;
+        transform-origin: 0 100%;
+      }
+      #s2-big .n {
+        position: relative;
+        display: inline-block;
+      }
+      #s2-big .ul {
+        position: absolute;
+        left: 4px;
+        right: 8px;
+        bottom: -8px;
+        height: 10px;
+        background: var(--red);
+        transform-origin: 0 50%;
+      }
+      #s2-formula {
+        position: absolute;
+        left: 124px;
+        top: 604px;
+        font: 400 56px/1 var(--serif);
+      }
+      #s2-formula i {
+        font-style: italic;
+      }
+      #s2-rule {
+        position: absolute;
+        right: 120px;
+        top: 812px;
+        width: 760px;
+        height: 3px;
+        background: var(--ink);
+        transform-origin: 100% 50%;
+      }
+      #s2-checked {
+        position: absolute;
+        right: 120px;
+        top: 844px;
+        font: italic 600 88px/1 var(--serif);
+        white-space: nowrap;
+      }
+      #s2-checked .b {
+        color: var(--blue);
+      }
+
+      /* ---------- terminals ---------- */
+      .term {
+        position: absolute;
+        background: var(--term);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 34px 70px rgba(20, 25, 35, 0.28);
+      }
+      .term-bar {
+        height: 54px;
+        background: var(--term-bar);
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+        gap: 20px;
+        padding: 0 22px;
       }
-      #title {
-        color: #f4f4f5;
-        font-size: 72px;
-        font-weight: 600;
-        letter-spacing: -0.03em;
+      .dots {
+        display: flex;
+        gap: 9px;
+      }
+      .dots i {
+        display: block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
+      .dots i:nth-child(1) {
+        background: #ff5f57;
+      }
+      .dots i:nth-child(2) {
+        background: #febc2e;
+      }
+      .dots i:nth-child(3) {
+        background: #28c840;
+      }
+      .term-title {
+        font: 400 24px/1 var(--mono);
+        color: #a3a9b3;
+      }
+      .term-body {
+        position: relative;
+        overflow: hidden;
+      }
+      .pr,
+      .num {
+        color: var(--term-blue);
+      }
+      .mut {
+        color: var(--term-muted);
+      }
+      .ok {
+        color: var(--term-green);
+      }
+      .caret {
+        display: inline-block;
+        width: 16px;
+        height: 31px;
+        margin-left: 2px;
+        vertical-align: -6px;
+        background: var(--term-fg);
+        opacity: 0;
+      }
+
+      /* ---------- scene 3: the run ---------- */
+      #s3-term {
+        left: 120px;
+        top: 196px;
+        width: 900px;
+        height: 664px;
+      }
+      #s3-term .term-body {
+        height: 610px;
+        padding: 28px 34px;
+      }
+      #t-col {
+        font: 400 27px/40px var(--mono);
+        color: var(--term-fg);
+      }
+      .tline {
+        height: 40px;
+        white-space: pre;
+      }
+      #s3-right {
+        position: absolute;
+        left: 1090px;
+        top: 300px;
+        width: 720px;
+      }
+      #s3-count {
+        font: 700 150px/1 var(--mono);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.04em;
+        white-space: nowrap;
+        transform-origin: 0 100%;
+      }
+      #s3-cap {
+        margin-top: 34px;
+        font: 600 60px/1.1 var(--serif);
+      }
+      #s3-cap em {
+        font-style: italic;
+        color: var(--blue);
+      }
+      #s3-file {
+        margin-top: 30px;
+        font: 400 24px/1.3 var(--mono);
+        color: var(--muted);
+      }
+      #s3-tape {
+        position: absolute;
+        left: 0;
+        top: 924px;
+        width: 1920px;
+        height: 66px;
+        background: var(--term);
+        overflow: hidden;
+      }
+      #s3-tape-inner {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 66px;
+        display: flex;
+        align-items: center;
+        padding-left: 120px;
+        white-space: pre;
+        font: 400 26px/1 var(--mono);
+        color: #c9cdd3;
+      }
+
+      /* ---------- scene 4: the twist ---------- */
+      #s4-h {
+        position: absolute;
+        left: 120px;
+        top: 128px;
+        font: 600 80px/1 var(--serif);
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+      }
+      #s4-h .w {
+        display: inline-block;
+      }
+      #s4-svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: visible;
+      }
+      .glabel {
+        position: absolute;
+        left: 110px;
+        width: 270px;
+        text-align: right;
+        font: 700 30px/1 var(--mono);
+        white-space: nowrap;
+      }
+      #s4-g-math {
+        top: 728px;
+        color: var(--red);
+      }
+      #s4-g-avg {
+        top: 790px;
+        color: var(--blue);
+      }
+      .callout {
+        position: absolute;
+        text-align: right;
+      }
+      .c-big {
+        font: 700 66px/1 var(--serif);
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+      }
+      .c-small {
+        margin-top: 10px;
+        font: 400 26px/1 var(--mono);
+        color: var(--muted);
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 14px;
+      }
+      #s4-c98 {
+        left: 600px;
+        top: 420px;
+        width: 466px;
+      }
+      #s4-c155 {
+        left: 1000px;
+        top: 282px;
+        width: 462px;
+      }
+      #s4-cap {
+        position: absolute;
+        left: 400px;
+        top: 880px;
+        font: 400 26px/1 var(--mono);
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .mini-row {
+        display: flex;
+        gap: 5px;
+      }
+      .mini-row .die-wrap {
+        width: 34px;
+        height: 34px;
+      }
+
+      /* ---------- scene 5: the benchmark ---------- */
+      .code-big {
+        position: absolute;
+        left: 120px;
+        font: 700 104px/1 var(--mono);
+        letter-spacing: -0.02em;
+        white-space: pre;
+      }
+      #s5-a {
+        top: 220px;
+        color: var(--blue);
+      }
+      #s5-vs {
+        position: absolute;
+        left: 124px;
+        top: 352px;
+        font: italic 400 64px/1 var(--serif);
+        color: var(--muted);
+      }
+      #s5-b {
+        top: 440px;
+      }
+      #s5-stamp {
+        position: absolute;
+        left: 120px;
+        top: 660px;
+        font: 700 88px/1 var(--serif);
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+        transform-origin: 0 50%;
+      }
+      #s5-stamp .ul {
+        position: absolute;
+        left: 0;
+        bottom: -14px;
+        width: 100%;
+        height: 8px;
+        background: var(--red);
+        transform-origin: 0 50%;
+      }
+      #s5-sub {
+        position: absolute;
+        left: 122px;
+        top: 794px;
+        font: 400 26px/1 var(--mono);
+        color: var(--muted);
+      }
+      #s5-term {
+        left: 900px;
+        top: 168px;
+        width: 900px;
+        height: 744px;
+      }
+      #s5-term .term-body {
+        height: 690px;
+        padding: 22px 32px;
+      }
+      #s5-table {
+        position: relative;
+        font: 400 27px/40px var(--mono);
+        color: var(--term-fg);
+      }
+      .row {
+        position: relative;
+        height: 40px;
+        white-space: pre;
+      }
+      .win {
+        position: relative;
+        display: inline-block;
+      }
+      .pill {
+        position: absolute;
+        left: -8px;
+        right: -8px;
+        top: 3px;
+        bottom: 3px;
+        border-radius: 6px;
+        background: rgba(76, 114, 176, 0.6);
+        transform-origin: 0 50%;
+      }
+      .wt {
+        position: relative;
+        color: #ffffff;
+        font-weight: 700;
+      }
+      .plus-w {
+        color: var(--term-muted);
+      }
+      #s5-band {
+        position: absolute;
+        left: -32px;
+        right: -32px;
+        top: 440px;
+        height: 40px;
+        background: rgba(143, 176, 227, 0.16);
+        transform-origin: 0 50%;
+      }
+
+      /* ---------- scene 6: the lab ---------- */
+      #s6-name {
+        position: absolute;
+        left: 120px;
+        top: 300px;
+        height: 96px;
+        display: flex;
+        align-items: center;
+        font: 700 88px/1 var(--mono);
+        white-space: pre;
+      }
+      #s6-caret {
+        display: block;
+        width: 46px;
+        height: 80px;
+        margin-left: 8px;
+        background: var(--blue);
+      }
+      #s6-emoji {
+        position: absolute;
+        left: 1530px;
+        top: 296px;
+        font-size: 92px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      #s6-tag {
+        position: absolute;
+        left: 120px;
+        top: 452px;
+        width: 1380px;
+        font: italic 500 70px/1.18 var(--serif);
+      }
+      #s6-url {
+        position: absolute;
+        left: 120px;
+        top: 664px;
+        font: 400 32px/1 var(--mono);
+        color: var(--blue);
+      }
+      #s6-dice {
+        position: absolute;
+        right: 120px;
+        top: 812px;
+        display: flex;
+        gap: 16px;
+      }
+      #s6-dice .die-wrap {
+        width: 84px;
+        height: 84px;
+      }
+      #s6-match {
+        position: absolute;
+        right: 120px;
+        top: 926px;
+        font: 400 24px/1 var(--mono);
+        color: var(--muted);
+        white-space: nowrap;
       }
     </style>
   </head>
   <body>
-    <div
-      id="root"
-      data-composition-id="main"
-      data-start="0"
-      data-duration="10"
-      data-width="1920"
-      data-height="1080"
-    >
-      <h1 id="title" class="clip" data-start="0" data-duration="10" data-track-index="0">Title</h1>
+    <div data-hf-id="hf-lhcf" id="root" data-composition-id="main" data-start="0" data-duration="23" data-width="1920" data-height="1080" data-fps="30">
+      <!-- ===== persistent lab-paper layer (spans the whole video) ===== -->
+      <div data-hf-id="hf-kdd5" id="paper" class="clip" data-start="0" data-duration="23" data-track-index="0">
+        <div data-hf-id="hf-gs5t" id="grid"></div>
+        <i data-hf-id="hf-swjn" class="reg a"></i><i data-hf-id="hf-k8ns" class="reg b"></i><i data-hf-id="hf-l0bl" class="reg c"></i><i data-hf-id="hf-ccfq" class="reg d"></i>
+        <div data-hf-id="hf-ysdh" id="topbar">
+          <span data-hf-id="hf-t9yy" id="topPath">brainfarts-and-benchmarks / how-long-until-dice-match</span>
+          <span data-hf-id="hf-hbq6" id="topExp">EXP. 01 · 5 dice · 200 runs</span>
+        </div>
+        <div data-hf-id="hf-zb4g" id="topRule"></div>
+      </div>
+
+      <!-- ===== scene 1 — the question (0.0–3.0) ===== -->
+      <section data-hf-id="hf-9u9u" id="s1" class="clip scene" data-start="0" data-duration="3" data-track-index="1">
+        <h1 data-hf-id="hf-yni9" id="s1-h1">
+          <span data-hf-id="hf-5q7n" id="s1-l1" class="ln">How long until</span>
+          <span data-hf-id="hf-ff0n" id="s1-l2" class="ln">five dice match?</span>
+        </h1>
+        <div data-hf-id="hf-807b" id="s1-dice">
+          <div data-hf-id="hf-1943" class="die-wrap"><div data-hf-id="hf-hshc" class="die" data-face="3"><i data-hf-id="hf-le1x" class="pip tl"></i><i data-hf-id="hf-xt2z" class="pip tr"></i><i data-hf-id="hf-fnje" class="pip ml"></i><i data-hf-id="hf-qj11" class="pip mc"></i><i data-hf-id="hf-8mkc" class="pip mr"></i><i data-hf-id="hf-eebn" class="pip bl"></i><i data-hf-id="hf-f63h" class="pip br"></i></div></div>
+          <div data-hf-id="hf-759f" class="die-wrap"><div data-hf-id="hf-ik55" class="die" data-face="2"><i data-hf-id="hf-1dx5" class="pip tl"></i><i data-hf-id="hf-78sb" class="pip tr"></i><i data-hf-id="hf-kwxa" class="pip ml"></i><i data-hf-id="hf-nkeh" class="pip mc"></i><i data-hf-id="hf-mvg4" class="pip mr"></i><i data-hf-id="hf-2sn7" class="pip bl"></i><i data-hf-id="hf-ajsh" class="pip br"></i></div></div>
+          <div data-hf-id="hf-6qye" class="die-wrap"><div data-hf-id="hf-mi96" class="die" data-face="1"><i data-hf-id="hf-2ku8" class="pip tl"></i><i data-hf-id="hf-6uha" class="pip tr"></i><i data-hf-id="hf-lb8b" class="pip ml"></i><i data-hf-id="hf-orbk" class="pip mc"></i><i data-hf-id="hf-loj1" class="pip mr"></i><i data-hf-id="hf-2ec6" class="pip bl"></i><i data-hf-id="hf-bqpk" class="pip br"></i></div></div>
+          <div data-hf-id="hf-6cnd" class="die-wrap"><div data-hf-id="hf-vjce" class="die" data-face="1"><i data-hf-id="hf-26j7" class="pip tl"></i><i data-hf-id="hf-6g69" class="pip tr"></i><i data-hf-id="hf-lpjc" class="pip ml"></i><i data-hf-id="hf-od0j" class="pip mc"></i><i data-hf-id="hf-m2u2" class="pip mr"></i><i data-hf-id="hf-2015" class="pip bl"></i><i data-hf-id="hf-bcej" class="pip br"></i></div></div>
+          <div data-hf-id="hf-5ycc" class="die-wrap"><div data-hf-id="hf-mxxk" class="die" data-face="3"><i data-hf-id="hf-w50y" class="pip tl"></i><i data-hf-id="hf-61v8" class="pip tr"></i><i data-hf-id="hf-ixe5" class="pip ml"></i><i data-hf-id="hf-mdhe" class="pip mc"></i><i data-hf-id="hf-o2d7" class="pip mr"></i><i data-hf-id="hf-1lq4" class="pip bl"></i><i data-hf-id="hf-9cve" class="pip br"></i></div></div>
+        </div>
+        <div data-hf-id="hf-0hwi" id="s1-logrow">[3, 2, 1, 1, 3]</div>
+        <div data-hf-id="hf-zcgy" id="s1-counter">
+          <div data-hf-id="hf-pgxp" class="label">roll</div>
+          <div data-hf-id="hf-ptn6" id="s1-count">1</div>
+          <div data-hf-id="hf-5dbw" id="s1-nomatch">no match</div>
+        </div>
+      </section>
+
+      <!-- ===== scene 2 — the prediction (3.0–6.2) ===== -->
+      <section data-hf-id="hf-2fm4" id="s2" class="clip scene" data-start="3" data-duration="3.2" data-track-index="1">
+        <div data-hf-id="hf-6wqe" id="s2-kicker">Math says</div>
+        <div data-hf-id="hf-w6ht" id="s2-big"><span data-hf-id="hf-ab59" class="n">1,296<i data-hf-id="hf-pvq7" class="ul"></i></span> rolls.</div>
+        <div data-hf-id="hf-rs16" id="s2-formula"><i data-hf-id="hf-3b0k">P</i> = 6 × (1/6)⁵ = 1/1,296</div>
+        <div data-hf-id="hf-dx9d" id="s2-rule"></div>
+        <div data-hf-id="hf-dh0u" id="s2-checked">I checked. <span data-hf-id="hf-h11v" class="b">200 times.</span></div>
+      </section>
+
+      <!-- ===== scene 3 — the run (6.2–10.4) ===== -->
+      <section data-hf-id="hf-ga35" id="s3" class="clip scene" data-start="6.2" data-duration="4.2" data-track-index="1">
+        <div data-hf-id="hf-v425" id="s3-term" class="term">
+          <div data-hf-id="hf-vwwm" class="term-bar">
+            <span data-hf-id="hf-r6mh" class="dots"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i></span>
+            <span data-hf-id="hf-5zr1" class="term-title">zsh — how-long-until-dice-match</span>
+          </div>
+          <div data-hf-id="hf-mdqm" class="term-body" data-layout-allow-overflow="">
+            <div data-hf-id="hf-lr16" id="t-col">
+              <div data-hf-id="hf-6f6y" class="tline"><span data-hf-id="hf-l70x" class="pr">$</span> <span data-hf-id="hf-dzwx" id="t-cmd"></span><span data-hf-id="hf-wmzu" id="t-car1" class="caret"></span></div>
+              <div data-hf-id="hf-3ugl" class="tline">Enter number of dice: <span data-hf-id="hf-l9on" id="t-in1"></span><span data-hf-id="hf-sovt" id="t-car2" class="caret"></span></div>
+              <div data-hf-id="hf-n9zs" class="tline">Enter number of simulations to run: <span data-hf-id="hf-ae70" id="t-in2"></span><span data-hf-id="hf-rx80" id="t-car3" class="caret"></span></div>
+            </div>
+          </div>
+        </div>
+        <div data-hf-id="hf-bhou" id="s3-right">
+          <div data-hf-id="hf-25tz" id="s3-count">0</div>
+          <div data-hf-id="hf-llaa" id="s3-cap">rolls. <em data-hf-id="hf-vcbi">Every one logged.</em></div>
+          <div data-hf-id="hf-bvgd" id="s3-file">logs/5die_200sim_26-01-26_17-40-55.txt · 4.1 MB</div>
+        </div>
+        <div data-hf-id="hf-7mx7" id="s3-tape" data-layout-allow-overflow=""><div data-hf-id="hf-086b" id="s3-tape-inner"></div></div>
+      </section>
+
+      <!-- ===== scene 4 — the twist (10.4–15.4) ===== -->
+      <section data-hf-id="hf-f3x8" id="s4" class="clip scene" data-start="10.4" data-duration="5" data-track-index="1">
+        <h2 data-hf-id="hf-jixa" id="s4-h">
+          <span data-hf-id="hf-21xk" class="w">Expected</span> <span data-hf-id="hf-7efd" class="w">value</span> <span data-hf-id="hf-kgc4" class="w neq">≠</span>
+          <span data-hf-id="hf-xqz4" class="w">typical</span> <span data-hf-id="hf-5kou" id="s4-w5" class="w">experience.</span>
+        </h2>
+        <svg data-hf-id="hf-yle3" id="s4-svg" viewBox="0 0 1920 1080" width="1920" height="1080" aria-hidden="true">
+          <defs data-hf-id="hf-mh0t">
+            <clippath data-hf-id="hf-9867" id="s4-clip"><rect data-hf-id="hf-oq41" id="s4-cliprect" x="390" y="0" width="0" height="1080" /></clippath>
+          </defs>
+          <line data-hf-id="hf-pcyz" id="s4-base" x1="400" y1="850" x2="1800" y2="850" stroke="#c3cad6" stroke-width="3" />
+          <line data-hf-id="hf-jeb9" id="s4-exp" x1="400" y1="770.8" x2="1800" y2="770.8" stroke="#d62728" stroke-width="3" stroke-dasharray="14 10" />
+          <g data-hf-id="hf-v7zh" clip-path="url(#s4-clip)">
+            <polyline data-hf-id="hf-w3pc" id="s4-line" fill="none" stroke="#4c72b0" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" points="" />
+          </g>
+          <line data-hf-id="hf-fmg3" id="s4-scan" x1="390" y1="290" x2="390" y2="850" stroke="#4c72b0" stroke-width="2" opacity="0" />
+          <line data-hf-id="hf-l2lx" id="s4-guide98" x1="1082.4" y1="850" x2="1082.4" y2="850" stroke="#5a6272" stroke-width="2" stroke-dasharray="6 6" />
+          <circle data-hf-id="hf-tujy" id="s4-dot98" cx="1082.4" cy="849.9" r="9" fill="#4c72b0" stroke="#f7f8fb" stroke-width="4" />
+          <circle data-hf-id="hf-qigr" id="s4-ring155" cx="1483.4" cy="316" r="12" fill="none" stroke="#4c72b0" stroke-width="3" opacity="0" />
+          <circle data-hf-id="hf-r4v8" id="s4-dot155" cx="1483.4" cy="316" r="11" fill="#4c72b0" stroke="#f7f8fb" stroke-width="4" />
+        </svg>
+        <div data-hf-id="hf-eu9f" id="s4-g-math" class="glabel">math 1,296</div>
+        <div data-hf-id="hf-h0k9" id="s4-g-avg" class="glabel">avg 1,287.6 <span data-hf-id="hf-gxgc" class="chk">✓</span></div>
+        <div data-hf-id="hf-sfyk" id="s4-c98" class="callout">
+          <div data-hf-id="hf-c56k" class="c-big">2 rolls</div>
+          <div data-hf-id="hf-di8x" class="c-small">
+            <span data-hf-id="hf-k95b" class="mini-row">
+              <span data-hf-id="hf-m172" class="die-wrap"><span data-hf-id="hf-ku75" class="die mini" data-face="6"><i data-hf-id="hf-vqpx" class="pip tl"></i><i data-hf-id="hf-5nk7" class="pip tr"></i><i data-hf-id="hf-jbp6" class="pip ml"></i><i data-hf-id="hf-lz6d" class="pip mc"></i><i data-hf-id="hf-ogo8" class="pip mr"></i><i data-hf-id="hf-17f3" class="pip bl"></i><i data-hf-id="hf-8ykd" class="pip br"></i></span></span>
+              <span data-hf-id="hf-u1zm" class="die-wrap"><span data-hf-id="hf-74dx" class="die mini" data-face="6"><i data-hf-id="hf-wxn0" class="pip tl"></i><i data-hf-id="hf-5996" class="pip tr"></i><i data-hf-id="hf-jq07" class="pip ml"></i><i data-hf-id="hf-n63g" class="pip mc"></i><i data-hf-id="hf-n9r5" class="pip mr"></i><i data-hf-id="hf-0t42" class="pip bl"></i><i data-hf-id="hf-a5hg" class="pip br"></i></span></span>
+              <span data-hf-id="hf-ugan" class="die-wrap"><span data-hf-id="hf-8bb0" class="die mini" data-face="6"><i data-hf-id="hf-wjbz" class="pip tl"></i><i data-hf-id="hf-4uy5" class="pip tr"></i><i data-hf-id="hf-k4b8" class="pip ml"></i><i data-hf-id="hf-mrsf" class="pip mc"></i><i data-hf-id="hf-no26" class="pip mr"></i><i data-hf-id="hf-0et1" class="pip bl"></i><i data-hf-id="hf-9r6f" class="pip br"></i></span></span>
+              <span data-hf-id="hf-uulo" class="die-wrap"><span data-hf-id="hf-7wzz" class="die mini" data-face="6"><i data-hf-id="hf-ujsu" class="pip tl"></i><i data-hf-id="hf-atjk" class="pip tr"></i><i data-hf-id="hf-np2h" class="pip ml"></i><i data-hf-id="hf-ks9a" class="pip mc"></i><i data-hf-id="hf-pnlb" class="pip mr"></i><i data-hf-id="hf-00i0" class="pip bl"></i><i data-hf-id="hf-e4jq" class="pip br"></i></span></span>
+              <span data-hf-id="hf-zavt" class="die-wrap"><span data-hf-id="hf-93x2" class="die mini" data-face="6"><i data-hf-id="hf-u5ht" class="pip tl"></i><i data-hf-id="hf-af8j" class="pip tr"></i><i data-hf-id="hf-o3di" class="pip ml"></i><i data-hf-id="hf-kdy9" class="pip mc"></i><i data-hf-id="hf-q1wc" class="pip mr"></i><i data-hf-id="hf-zm6z" class="pip bl"></i><i data-hf-id="hf-dq8p" class="pip br"></i></span></span>
+            </span>
+            <span data-hf-id="hf-dugp">Sim 98</span>
+          </div>
+        </div>
+        <div data-hf-id="hf-59ge" id="s4-c155" class="callout">
+          <div data-hf-id="hf-ksvo" class="c-big">8,738 rolls</div>
+          <div data-hf-id="hf-4sdx" class="c-small"><span data-hf-id="hf-uu7p">Sim 155</span></div>
+        </div>
+        <div data-hf-id="hf-v148" id="s4-cap">Fig. 1 — Iterations per Simulation · Sim 1 → 200 · 5 dice</div>
+      </section>
+
+      <!-- ===== scene 5 — meanwhile, in benchmarks (15.4–18.8) ===== -->
+      <section data-hf-id="hf-5dni" id="s5" class="clip scene" data-start="15.4" data-duration="3.4" data-track-index="1">
+        <div data-hf-id="hf-1lnn" id="s5-a" class="code-big">nums * 2</div>
+        <div data-hf-id="hf-ic7s" id="s5-vs">vs</div>
+        <div data-hf-id="hf-q2qy" id="s5-b" class="code-big">nums + nums</div>
+        <div data-hf-id="hf-64ej" id="s5-stamp"><span data-hf-id="hf-8tle">0.105 µs faster.</span><i data-hf-id="hf-e6an" class="ul"></i></div>
+        <div data-hf-id="hf-h4eu" id="s5-sub">per call at n = 100 · 5,000 repeats</div>
+        <div data-hf-id="hf-o5m7" id="s5-term" class="term">
+          <div data-hf-id="hf-iuka" class="term-bar">
+            <span data-hf-id="hf-qh4t" class="dots"><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i><i data-hf-id="hf-0zjc"></i></span>
+            <span data-hf-id="hf-a6x4" class="term-title">zsh — brainfarts-and-benchmarks</span>
+          </div>
+          <div data-hf-id="hf-ty2f" class="term-body">
+            <div data-hf-id="hf-u49u" id="s5-table">
+              <div data-hf-id="hf-5kur" id="s5-band"></div>
+              <div data-hf-id="hf-m6wh" class="row"><span data-hf-id="hf-sy11" class="pr">$</span> pytest -q -s</div>
+              <div data-hf-id="hf-to9i" class="row">--- visible test case summary (avg µs per call) ---</div>
+              <div data-hf-id="hf-du1w" class="row">repeats per measurement: 5000</div>
+              <div data-hf-id="hf-thy4" class="row"><span data-hf-id="hf-fijo" class="mut">n    plus_us     mul_us   winner</span></div>
+              <div data-hf-id="hf-lt04" class="row"><span data-hf-id="hf-d8f7" class="mut">--------------------------------------</span></div>
+              <div data-hf-id="hf-ufxh" class="row">0        0.040     0.050   <span data-hf-id="hf-0pal" class="plus-w">plus</span></div>
+              <div data-hf-id="hf-vyi0" class="row">1        0.050     0.062   <span data-hf-id="hf-cu9t" class="plus-w">plus</span></div>
+              <div data-hf-id="hf-ghjf" class="row">2        0.057     0.069   <span data-hf-id="hf-e16w" class="plus-w">plus</span></div>
+              <div data-hf-id="hf-y63s" class="row">5        0.072     0.075   <span data-hf-id="hf-dmvv" class="plus-w">plus</span></div>
+              <div data-hf-id="hf-2pdd" class="row">10       0.086     0.082   <span data-hf-id="hf-ds2d" class="win"><i data-hf-id="hf-oaxx" class="pill"></i><span data-hf-id="hf-ok0i" class="wt">mul</span></span></div>
+              <div data-hf-id="hf-hu2e" class="row">50       0.256     0.213   <span data-hf-id="hf-fkw9" class="win"><i data-hf-id="hf-ddbt" class="pill"></i><span data-hf-id="hf-eh7a" class="wt">mul</span></span></div>
+              <div data-hf-id="hf-73d7" class="row">100      0.409     0.304   <span data-hf-id="hf-grtc" class="win"><i data-hf-id="hf-ek8w" class="pill"></i><span data-hf-id="hf-evib" class="wt">mul</span></span></div>
+              <div data-hf-id="hf-km31" class="row"><span data-hf-id="hf-qorn" class="mut">--------------------------------------</span></div>
+              <div data-hf-id="hf-1oux" class="row">visible cases shown: 7</div>
+              <div data-hf-id="hf-k1mf" class="row">hidden cases passed silently <span data-hf-id="hf-gzyo" class="chk ok">✓</span></div>
+              <div data-hf-id="hf-l0e2" class="row"><span data-hf-id="hf-q353" class="ok">220 passed</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== scene 6 — the lab (18.8–23.0) ===== -->
+      <section data-hf-id="hf-rme5" id="s6" class="clip scene" data-start="18.8" data-duration="4.2" data-track-index="1">
+        <div data-hf-id="hf-tnrq" id="s6-name"><span data-hf-id="hf-108h" id="s6-typed">brainfarts-and-benchmarks</span><i data-hf-id="hf-21ts" id="s6-caret"></i></div>
+        <div data-hf-id="hf-v529" id="s6-emoji">🧠⚡️</div>
+        <div data-hf-id="hf-x24x" id="s6-tag">If something here looks dumb — that’s probably the point.</div>
+        <div data-hf-id="hf-0fju" id="s6-url">github.com/shreyuu/brainfarts-and-benchmarks</div>
+        <div data-hf-id="hf-ucc6" id="s6-dice">
+          <div data-hf-id="hf-5k1b" class="die-wrap"><div data-hf-id="hf-8l5f" class="die small match" data-face="6"><i data-hf-id="hf-koff" class="pip tl"></i><i data-hf-id="hf-t5ch" class="pip tr"></i><i data-hf-id="hf-qg1m" class="pip ml"></i><i data-hf-id="hf-ulkr" class="pip mc"></i><i data-hf-id="hf-r6bw" class="pip mr"></i><i data-hf-id="hf-7fex" class="pip bl"></i><i data-hf-id="hf-tvkj" class="pip br"></i></div></div>
+          <div data-hf-id="hf-55qa" class="die-wrap"><div data-hf-id="hf-60z7" class="die small match" data-face="6"><i data-hf-id="hf-l2qg" class="pip tl"></i><i data-hf-id="hf-tjni" class="pip tr"></i><i data-hf-id="hf-q1ql" class="pip ml"></i><i data-hf-id="hf-uzvs" class="pip mc"></i><i data-hf-id="hf-qs0v" class="pip mr"></i><i data-hf-id="hf-7tpy" class="pip bl"></i><i data-hf-id="hf-u9vk" class="pip br"></i></div></div>
+          <div data-hf-id="hf-4rf9" class="die-wrap"><div data-hf-id="hf-5mo6" class="die small match" data-face="6"><i data-hf-id="hf-jvtd" class="pip tl"></i><i data-hf-id="hf-txyj" class="pip tr"></i><i data-hf-id="hf-r8no" class="pip ml"></i><i data-hf-id="hf-tsyp" class="pip mc"></i><i data-hf-id="hf-qdpu" class="pip mr"></i><i data-hf-id="hf-880z" class="pip bl"></i><i data-hf-id="hf-t2yh" class="pip br"></i></div></div>
+          <div data-hf-id="hf-4d48" class="die-wrap"><div data-hf-id="hf-58d5" class="die small match" data-face="6"><i data-hf-id="hf-ka4e" class="pip tl"></i><i data-hf-id="hf-uc9k" class="pip tr"></i><i data-hf-id="hf-qucn" class="pip ml"></i><i data-hf-id="hf-u79q" class="pip mc"></i><i data-hf-id="hf-pzet" class="pip mr"></i><i data-hf-id="hf-8mc0" class="pip bl"></i><i data-hf-id="hf-th9i" class="pip br"></i></div></div>
+          <div data-hf-id="hf-3yt7" class="die-wrap"><div data-hf-id="hf-4u24" class="die small match" data-face="6"><i data-hf-id="hf-j37b" class="pip tl"></i><i data-hf-id="hf-rk4d" class="pip tr"></i><i data-hf-id="hf-s19q" class="pip ml"></i><i data-hf-id="hf-t0cn" class="pip mc"></i><i data-hf-id="hf-srk0" class="pip mr"></i><i data-hf-id="hf-5u6t" class="pip bl"></i><i data-hf-id="hf-sacf" class="pip br"></i></div></div>
+        </div>
+        <div data-hf-id="hf-xym6" id="s6-match">Match achieved with value 6 in 2 iterations.</div>
+      </section>
+
+      <!-- ===== audio: warm business bed + motion-matched SFX ===== -->
+      <!-- Bed level lives in the volume lane (0 → 0.30 fade-in, hold, fade-out to 0 by 23.0s). -->
+      <audio data-hf-id="hf-tslc" id="music" src="assets/music/happy-beats-business-moves-vol-11-by-ende-dot-app.mp3" data-start="0" data-duration="23" data-track-index="10" data-automation="{&quot;version&quot;:1,&quot;lanes&quot;:[{&quot;target&quot;:&quot;volume&quot;,&quot;points&quot;:[{&quot;t&quot;:0,&quot;v&quot;:0},{&quot;t&quot;:0.35,&quot;v&quot;:0.3},{&quot;t&quot;:21.7,&quot;v&quot;:0.3},{&quot;t&quot;:23,&quot;v&quot;:0}]}]}"></audio>
+      <audio data-hf-id="hf-enei" id="sfx-dice-shake" src="assets/sfx/casino/dice-shake-1.ogg" data-start="0" data-duration="1.48" data-track-index="11" data-volume="0.5"></audio>
+      <audio data-hf-id="hf-fmxi" id="sfx-dice-land" src="assets/sfx/casino/dice-throw-1.ogg" data-start="1.52" data-duration="0.63" data-track-index="12" data-volume="0.7"></audio>
+      <!-- typing: `python main.py` (every other key), Enter, 5, Enter, 2·0·0 (thinned), Enter -->
+      <audio data-hf-id="hf-y53g" id="sfx-key-01" src="assets/sfx/keyboard/keypress-003.wav" data-start="6.42" data-duration="0.2" data-track-index="13" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-pjh0" id="sfx-key-02" src="assets/sfx/keyboard/keypress-007.wav" data-start="6.51" data-duration="0.2" data-track-index="14" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-ozxl" id="sfx-key-03" src="assets/sfx/keyboard/keypress-011.wav" data-start="6.6" data-duration="0.2" data-track-index="15" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-eea8" id="sfx-key-04" src="assets/sfx/keyboard/keypress-014.wav" data-start="6.69" data-duration="0.2" data-track-index="13" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-mdnc" id="sfx-key-05" src="assets/sfx/keyboard/keypress-018.wav" data-start="6.78" data-duration="0.2" data-track-index="14" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-5wqr" id="sfx-key-06" src="assets/sfx/keyboard/keypress-022.wav" data-start="6.87" data-duration="0.2" data-track-index="15" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-7z4o" id="sfx-key-07" src="assets/sfx/keyboard/keypress-026.wav" data-start="6.96" data-duration="0.2" data-track-index="13" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-1488" id="sfx-key-08" src="assets/sfx/keyboard/keypress-029.wav" data-start="7.06" data-duration="0.2" data-track-index="14" data-volume="0.5"></audio>
+      <audio data-hf-id="hf-qmtd" id="sfx-key-09" src="assets/sfx/keyboard/keypress-003.wav" data-start="7.22" data-duration="0.2" data-track-index="15" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-b1g7" id="sfx-key-10" src="assets/sfx/keyboard/keypress-029.wav" data-start="7.32" data-duration="0.2" data-track-index="13" data-volume="0.5"></audio>
+      <audio data-hf-id="hf-ydyq" id="sfx-key-11" src="assets/sfx/keyboard/keypress-011.wav" data-start="7.44" data-duration="0.2" data-track-index="14" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-bwwa" id="sfx-key-12" src="assets/sfx/keyboard/keypress-018.wav" data-start="7.56" data-duration="0.2" data-track-index="15" data-volume="0.4"></audio>
+      <audio data-hf-id="hf-uxp9" id="sfx-key-13" src="assets/sfx/keyboard/keypress-029.wav" data-start="7.64" data-duration="0.2" data-track-index="13" data-volume="0.5"></audio>
+      <audio data-hf-id="hf-czuq" id="sfx-count-lock" src="assets/sfx/interface/drop_002.ogg" data-start="9.48" data-duration="0.19" data-track-index="16" data-volume="0.33"></audio>
+      <audio data-hf-id="hf-4tot" id="sfx-spike" src="assets/sfx/impact/impactSoft_medium_001.ogg" data-start="12.62" data-duration="0.18" data-track-index="17" data-volume="0.5"></audio>
+      <audio data-hf-id="hf-iqzv" id="sfx-stamp" src="assets/sfx/impact/impactGlass_light_001.ogg" data-start="17.44" data-duration="0.21" data-track-index="18" data-volume="0.42"></audio>
+      <audio data-hf-id="hf-pc9c" id="sfx-logo" src="assets/sfx/impact/impactBell_heavy_000.ogg" data-start="19.4" data-duration="1.48" data-track-index="19" data-volume="0.65"></audio>
+      <audio data-hf-id="hf-s5vl" id="sfx-outro-dice" src="assets/sfx/casino/dice-throw-2.ogg" data-start="20.52" data-duration="0.4" data-track-index="20" data-volume="0.4"></audio>
     </div>
+
     <script>
-      const tl = gsap.timeline({ paused: true });
-      // Example: tl.fromTo("#title", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6 }, 0);
-      window.__timelines["main"] = tl;
-      tl.seek(0);
+      (function () {
+        "use strict";
+        var D = window.BRAG_DATA;
+        var FPS = 30;
+        var tl = gsap.timeline({ paused: true });
+
+        function $(s) {
+          return document.querySelector(s);
+        }
+        function $$(s) {
+          return Array.prototype.slice.call(document.querySelectorAll(s));
+        }
+        function fmt(n) {
+          return n.toLocaleString("en-US");
+        }
+        function rollText(roll) {
+          return "[" + roll.join(", ") + "]";
+        }
+
+        /* ---------- data-driven DOM, built synchronously before the timeline ---------- */
+
+        // Scene 3 terminal: main.py's 200 real "finished" lines, then its results block.
+        var col = $("#t-col");
+        var LH = 40;
+        var VIS = 13;
+        D.iters.forEach(function (k, i) {
+          var row = document.createElement("div");
+          row.className = "tline";
+          row.innerHTML =
+            '<span class="mut">&gt;&gt;&gt;</span> Simulation ' + (i + 1) +
+            ' finished after <span class="num">' + k + "</span> iterations";
+          col.appendChild(row);
+        });
+        [
+          "",
+          "--- Simulation Results ---",
+          "Dice count: 5",
+          "Simulations: 200",
+          "Average iterations: 1287.59",
+          "Min iterations: 2 (Simulation 98)",
+          "Max iterations: 8738 (Simulation 155)",
+        ].forEach(function (s) {
+          var row = document.createElement("div");
+          row.className = "tline";
+          row.textContent = s;
+          col.appendChild(row);
+        });
+        var N = col.children.length;
+        // k printed lines: scroll so the newest sits at the bottom; clip to the VIS-line window
+        // (lines scrolled away above it, and lines not yet printed below it).
+        function colState(k) {
+          var top = Math.max(0, k - VIS) * LH;
+          return {
+            y: -top,
+            clipPath: "inset(" + top + "px 0px " + (N - k) * LH + "px 0px)",
+          };
+        }
+        col.style.clipPath = colState(1).clipPath;
+
+        // Scene 3 log tape: Simulation 1's real rolls, exactly as the log writes them.
+        $("#s3-tape-inner").textContent = D.sim1.map(rollText).join("   ");
+
+        // Scene 4: the notebook's "Iterations per Simulation" plot, all 200 runs, linear y.
+        var X0 = 400,
+          X1 = 1800,
+          YB = 850,
+          YT = 300,
+          YMAX = 9000;
+        $("#s4-line").setAttribute(
+          "points",
+          D.iters
+            .map(function (v, i) {
+              var x = X0 + (i / 199) * (X1 - X0);
+              var y = YB - (v / YMAX) * (YB - YT);
+              return x.toFixed(1) + "," + y.toFixed(1);
+            })
+            .join(" "),
+        );
+
+        /* ---------- persistent paper layer ---------- */
+        tl.fromTo("#grid", { opacity: 0.7 }, { opacity: 1, duration: 2.875, ease: "sine.inOut", yoyo: true, repeat: 7 }, 0);
+        tl.fromTo("#topRule", { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "power3.out" }, 0);
+        tl.fromTo("#topbar", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.out" }, 0.05);
+
+        /* ---------- scene 1 — the question (0.0–3.0) ---------- */
+        tl.fromTo("#s1-h1 .ln", { yPercent: 55, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.42, ease: "power3.out", stagger: 0.1 }, 0.08);
+        tl.fromTo("#s1-dice", { y: 90, opacity: 0 }, { y: 0, opacity: 1, duration: 0.36, ease: "power3.out" }, 0);
+        tl.fromTo("#s1-counter", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 0.25);
+        tl.fromTo("#s1-logrow", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "sine.out" }, 0.3);
+
+        // Faces flip through Simulation 1's first 15 logged rolls; roll 15 is the near miss [4, 4, 4, 5, 4].
+        var dice = $$("#s1-dice .die");
+        var wraps = $$("#s1-dice .die-wrap");
+        var LAND = 1.6; // beat-biased: the dice land on the 1.60s strong cue
+        var STEP = LAND / 14;
+        for (var r = 1; r < 15; r++) {
+          (function (r) {
+            var t = r * STEP;
+            var roll = D.sim1[r];
+            dice.forEach(function (die, i) {
+              tl.set(die, { attr: { "data-face": roll[i] } }, t);
+            });
+            tl.set("#s1-logrow", { textContent: rollText(roll) }, t);
+            tl.set("#s1-count", { textContent: String(r + 1) }, t);
+          })(r);
+        }
+        var tilt = [-10, 8, -7, 11, -8];
+        var rest = [-3, 2, -1, 4, -2];
+        wraps.forEach(function (w, i) {
+          tl.fromTo(w, { rotation: tilt[i], y: -24 - i * 3 }, { rotation: -tilt[i], y: 6, duration: 0.2, ease: "sine.inOut", yoyo: true, repeat: 7 }, 0);
+          tl.to(w, { rotation: rest[i], y: 0, duration: 0.42, ease: "back.out(2.2)" }, LAND + i * 0.025);
+        });
+        // The odd one out: the single 5 among four 4s.
+        tl.to(dice[3], { borderColor: "#d62728", duration: 0.12, ease: "none" }, 1.8);
+        tl.to(wraps[3], { keyframes: [{ x: -8, duration: 0.05 }, { x: 8, duration: 0.07 }, { x: -5, duration: 0.06 }, { x: 0, duration: 0.07 }], ease: "none" }, 1.8);
+        tl.fromTo("#s1-nomatch", { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.25, ease: "power2.out" }, 1.82);
+
+        /* ---------- scene 2 — the prediction (3.0–6.2) ---------- */
+        tl.fromTo("#s2-kicker", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.32, ease: "power2.out" }, 3.06);
+        // beat-biased: "1,296" settles near the 3.70s strong cue
+        tl.fromTo("#s2-big", { opacity: 0, y: 40, scale: 1.05 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "expo.out" }, 3.22);
+        tl.fromTo("#s2-big .ul", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power2.inOut" }, 3.62);
+        tl.to("#s2-big", { x: 14, duration: 2.5, ease: "sine.inOut" }, 3.67);
+        tl.fromTo("#s2-formula", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "sine.out" }, 3.86);
+        tl.fromTo("#s2-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: "power3.inOut" }, 4.36);
+        tl.fromTo("#s2-checked", { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.4, ease: "back.out(1.5)" }, 4.48);
+
+        /* ---------- scene 3 — the run (6.2–10.4) ---------- */
+        // beat-locked: 6.34s — the terminal lands on the strong cue
+        // opacity snaps in (a slow fade turns the dark card muddy gray over the paper); the slide carries the motion
+        tl.set("#s3-term", { opacity: 0, y: 80 }, 0);
+        tl.to("#s3-term", { y: 0, duration: 0.3, ease: "power3.out" }, 6.2);
+        tl.to("#s3-term", { opacity: 1, duration: 0.1, ease: "none" }, 6.2);
+        tl.fromTo("#s3-tape", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "sine.out" }, 6.24);
+        tl.fromTo("#s3-tape-inner", { x: 0 }, { x: -4300, duration: 4.2, ease: "none" }, 6.2);
+        tl.fromTo("#s3-count", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.35, ease: "expo.out" }, 6.38);
+
+        // `python main.py`, typed; then the two prompts and their answers, exactly as main.py asks.
+        tl.set("#t-car1", { opacity: 1 }, 6.3);
+        var cmd = "python main.py";
+        var T0 = 6.42;
+        var CH = 0.045;
+        for (var c = 1; c <= cmd.length; c++) {
+          tl.set("#t-cmd", { textContent: cmd.slice(0, c) }, T0 + (c - 1) * CH);
+        }
+        tl.set("#t-car1", { opacity: 0 }, 7.06);
+        tl.set("#t-col", colState(2), 7.06);
+        tl.set("#t-car2", { opacity: 1 }, 7.06);
+        tl.set("#t-in1", { textContent: "5" }, 7.22);
+        tl.set("#t-car2", { opacity: 0 }, 7.32);
+        tl.set("#t-col", colState(3), 7.32);
+        tl.set("#t-car3", { opacity: 1 }, 7.32);
+        tl.set("#t-in2", { textContent: "2" }, 7.44);
+        tl.set("#t-in2", { textContent: "20" }, 7.5);
+        tl.set("#t-in2", { textContent: "200" }, 7.56);
+        tl.set("#t-car3", { opacity: 0 }, 7.64);
+
+        // 200 simulations stream out (ease-in); the counter is the running sum of their real iteration counts.
+        var cum = [0];
+        D.iters.forEach(function (v, i) {
+          cum.push(cum[i] + v);
+        });
+        var SF = 55;
+        var S_END = 9.5; // beat-locked: 9.50s — the last simulation prints and the counter locks at 257,518
+        var S0 = S_END - SF / FPS;
+        for (var f = 1; f <= SF; f++) {
+          var sims = Math.round(200 * Math.pow(f / SF, 1.7));
+          var t = S0 + f / FPS;
+          tl.set("#t-col", colState(3 + sims), t);
+          tl.set("#s3-count", { textContent: fmt(cum[sims]) }, t);
+        }
+        tl.fromTo("#s3-count", { scale: 1 }, { scale: 1.045, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, S_END);
+        for (var j = 1; j <= 7; j++) {
+          tl.set("#t-col", colState(203 + j), 9.54 + j * 0.04);
+        }
+        tl.fromTo("#s3-cap", { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 7.7);
+        tl.fromTo("#s3-file", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "sine.out" }, 9.62);
+
+        /* ---------- scene 4 — the twist (10.4–15.4) ---------- */
+        // the scene opens on the math: the red 1,296 line draws from the cut
+        tl.fromTo(["#s4-base", "#s4-cap"], { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "sine.out" }, 10.4);
+        tl.fromTo("#s4-exp", { attr: { x2: 400 } }, { attr: { x2: 1800 }, duration: 0.5, ease: "power2.inOut" }, 10.4);
+        tl.fromTo("#s4-g-math", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" }, 10.46);
+        // seismograph reveal, left → right, constant speed
+        tl.fromTo("#s4-cliprect", { attr: { width: 0 } }, { attr: { width: 1420 }, duration: 1.3, ease: "none" }, 10.62);
+        tl.set("#s4-scan", { opacity: 0.55 }, 10.62);
+        tl.fromTo("#s4-scan", { attr: { x1: 390, x2: 390 } }, { attr: { x1: 1810, x2: 1810 }, duration: 1.3, ease: "none" }, 10.62);
+        tl.to("#s4-scan", { opacity: 0, duration: 0.2, ease: "none" }, 11.92);
+        tl.fromTo("#s4-g-avg", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" }, 11.86);
+        // beat-grid: the Sim 98 callout arrives on the 12.12s beat
+        tl.fromTo("#s4-guide98", { attr: { y2: 850 } }, { attr: { y2: 476 }, duration: 0.3, ease: "power2.out" }, 12.1);
+        tl.fromTo("#s4-dot98", { scale: 0 }, { scale: 1, duration: 0.28, ease: "back.out(3)", svgOrigin: "1082.4 849.9" }, 12.1);
+        tl.fromTo("#s4-c98", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.32, ease: "power2.out" }, 12.16);
+        // beat-locked: 12.65s — the 8,738-roll spike gets its callout
+        tl.fromTo("#s4-dot155", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(3)", svgOrigin: "1483.4 316" }, 12.6);
+        tl.fromTo("#s4-ring155", { scale: 1, opacity: 0.9 }, { scale: 3.2, opacity: 0, duration: 0.7, ease: "power2.out", svgOrigin: "1483.4 316", immediateRender: false }, 12.65);
+        tl.fromTo("#s4-c155", { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.34, ease: "expo.out" }, 12.63);
+        // beat-grid: the takeaway lands on the 13.18s beat
+        tl.fromTo("#s4-h .w", { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.05 }, 13.18);
+
+        /* ---------- scene 5 — meanwhile, in benchmarks (15.4–18.8) ---------- */
+        tl.set("#topPath", { textContent: "brainfarts-and-benchmarks / why_is_list_multiply_faster" }, 15.4);
+        tl.set("#topExp", { textContent: "EXP. 02 · n = 0–100 · 5,000 repeats" }, 15.4);
+        tl.fromTo("#s5-a", { opacity: 0, x: -70 }, { opacity: 1, x: 0, duration: 0.36, ease: "power3.out" }, 15.44);
+        tl.fromTo("#s5-vs", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 15.58);
+        tl.fromTo("#s5-b", { opacity: 0, x: -70 }, { opacity: 1, x: 0, duration: 0.36, ease: "power3.out" }, 15.66);
+        tl.set("#s5-term", { opacity: 0, x: 100 }, 0);
+        tl.to("#s5-term", { x: 0, duration: 0.42, ease: "expo.out" }, 15.44);
+        tl.to("#s5-term", { opacity: 1, duration: 0.1, ease: "none" }, 15.44);
+        // beat-grid: rows stream from the 15.81s beat (texture — the full table then holds)
+        tl.fromTo("#s5-table .row", { opacity: 0, x: -12 }, { opacity: 1, x: 0, duration: 0.16, ease: "power1.out", stagger: 0.058 }, 15.81);
+        // beat-grid: the three `mul` winners light up from the 16.86s beat
+        tl.fromTo(".pill", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power2.out", stagger: 0.13 }, 16.86);
+        tl.fromTo("#s5-band", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out" }, 17.14);
+        // natural timing (not the 17.91s cue) so the stamp holds ≥1s before the cut
+        tl.fromTo("#s5-stamp", { opacity: 0, scale: 1.3, rotation: -3 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.32, ease: "back.out(1.6)" }, 17.45);
+        tl.fromTo("#s5-stamp .ul", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.inOut" }, 17.66);
+        tl.fromTo("#s5-sub", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 17.7);
+
+        /* ---------- scene 6 — the lab (18.8–23.0) ---------- */
+        tl.set("#topPath", { textContent: "brainfarts-and-benchmarks / README.md" }, 18.8);
+        tl.to("#topExp", { opacity: 0, duration: 0.2, ease: "none" }, 18.8);
+        var name = "brainfarts-and-benchmarks";
+        tl.set("#s6-typed", { textContent: "" }, 18.8);
+        for (var n = 1; n <= name.length; n++) {
+          tl.set("#s6-typed", { textContent: name.slice(0, n) }, 18.86 + (n - 1) * 0.018);
+        }
+        tl.fromTo("#s6-caret", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "steps(1)", yoyo: true, repeat: 8, immediateRender: false }, 19.35);
+        // logo payoff near the 19.49s beat
+        tl.fromTo("#s6-emoji", { opacity: 0, scale: 0.4, rotation: -14 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.2)" }, 19.4);
+        tl.fromTo("#s6-tag", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 19.58);
+        tl.to("#s6-tag", { y: -6, duration: 2.5, ease: "sine.inOut" }, 20.1);
+        tl.fromTo("#s6-url", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" }, 20.15);
+        var rests = [-3, 2, -2, 3, -1];
+        $$("#s6-dice .die-wrap").forEach(function (w, i) {
+          tl.fromTo(w, { opacity: 0, y: -70, rotation: i % 2 ? 18 : -18 }, { opacity: 1, y: 0, rotation: rests[i], duration: 0.5, ease: "bounce.out" }, 20.55 + i * 0.05);
+        });
+        tl.fromTo("#s6-match", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "sine.out" }, 21.0);
+
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
     </script>
   </body>
 </html>

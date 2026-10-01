@@ -1,0 +1,21 @@
+{
+  "duration": 23,
+  "assertions": [
+    { "kind": "appearsBy", "selector": "#s1-l2", "bySec": 0.7 },
+    { "kind": "appearsBy", "selector": "#s1-nomatch", "bySec": 2.2 },
+    { "kind": "appearsBy", "selector": "#s2-big", "bySec": 3.8 },
+    { "kind": "appearsBy", "selector": "#s2-checked", "bySec": 4.9 },
+    { "kind": "appearsBy", "selector": "#s3-term", "bySec": 6.45 },
+    { "kind": "appearsBy", "selector": "#s3-cap", "bySec": 8.2 },
+    { "kind": "appearsBy", "selector": "#s4-c98", "bySec": 12.5 },
+    { "kind": "appearsBy", "selector": "#s4-c155", "bySec": 12.9 },
+    { "kind": "appearsBy", "selector": "#s4-w5", "bySec": 13.8 },
+    { "kind": "appearsBy", "selector": "#s5-stamp", "bySec": 17.75 },
+    { "kind": "appearsBy", "selector": "#s6-tag", "bySec": 20.1 },
+    { "kind": "before", "a": "#s4-c98", "b": "#s4-c155" },
+    { "kind": "before", "a": "#s5-b", "b": "#s5-stamp" },
+    { "kind": "staysInFrame", "selector": "#s4-c155" },
+    { "kind": "staysInFrame", "selector": "#s6-emoji" },
+    { "kind": "keepsMoving", "maxStaticSec": 2 }
+  ]
+}

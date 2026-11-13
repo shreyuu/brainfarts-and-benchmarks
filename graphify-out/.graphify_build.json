@@ -1,0 +1,1 @@
+{"excludes": ["brag-output/composition/.thumbnails/", "brag-output/composition/.waveform-cache/", "brag-output/composition/.hyperframes/", "brag-output/composition/assets/vendor/", "*.mp3", "*.ogg", "*.wav", "*.mp4", ".serena/"]}

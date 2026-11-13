@@ -1,0 +1,146 @@
+{
+  "brag-output/composition/assets/data.js": {
+    "mtime": 1790895915.8761182,
+    "seen": 1794589536.656088,
+    "ast_hash": "31befde4c2b0cb71b4d6ef3d3d511661",
+    "semantic_hash": "31befde4c2b0cb71b4d6ef3d3d511661"
+  },
+  "brag-output/composition/assets/music/cues/happy-beats-business-moves-vol-11-by-ende-dot-app.music-cues.json": {
+    "mtime": 1790895852.2085896,
+    "seen": 1794589536.65609,
+    "ast_hash": "d759f14e11c1f16f56a68d76b7cc1ad6",
+    "semantic_hash": "d759f14e11c1f16f56a68d76b7cc1ad6"
+  },
+  "brag-output/composition/hyperframes.json": {
+    "mtime": 1790895460.994853,
+    "seen": 1794589536.656091,
+    "ast_hash": "9aba7af72c9a867a940b5ea847eb18da",
+    "semantic_hash": "9aba7af72c9a867a940b5ea847eb18da"
+  },
+  "brag-output/composition/index.motion.json": {
+    "mtime": 1790896578.0969577,
+    "seen": 1794589536.656091,
+    "ast_hash": "61bd8111aead7290ebcac079ead0045c",
+    "semantic_hash": "61bd8111aead7290ebcac079ead0045c"
+  },
+  "brag-output/composition/meta.json": {
+    "mtime": 1790895460.9936862,
+    "seen": 1794589536.656092,
+    "ast_hash": "d9b85988fd43888680c9b4de2b0f78e9",
+    "semantic_hash": "d9b85988fd43888680c9b4de2b0f78e9"
+  },
+  "brag-output/composition/package.json": {
+    "mtime": 1790895460.995365,
+    "seen": 1794589536.656093,
+    "ast_hash": "2542068d10f80bf7658bb41b13659453",
+    "semantic_hash": "2542068d10f80bf7658bb41b13659453"
+  },
+  "how-long-until-dice-match/main.py": {
+    "mtime": 1768739912.8638275,
+    "seen": 1794589536.656093,
+    "ast_hash": "33a957b94de319b7b01109d0ccacaf1e",
+    "semantic_hash": "33a957b94de319b7b01109d0ccacaf1e"
+  },
+  "main.py": {
+    "mtime": 1772192611.088206,
+    "seen": 1794589536.6561012,
+    "ast_hash": "d9246e9b265a4d5730bcfbb4e576746a",
+    "semantic_hash": "d9246e9b265a4d5730bcfbb4e576746a"
+  },
+  "why_is_list_multiply_faster/__init__.py": {
+    "mtime": 1768443442.6915934,
+    "seen": 1794589536.656102,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "why_is_list_multiply_faster/conftest.py": {
+    "mtime": 1768444059.8830595,
+    "seen": 1794589536.656103,
+    "ast_hash": "7db17c1954189948c59de2a73f91a9f1",
+    "semantic_hash": "7db17c1954189948c59de2a73f91a9f1"
+  },
+  "why_is_list_multiply_faster/experiment.py": {
+    "mtime": 1768443292.651065,
+    "seen": 1794589536.656103,
+    "ast_hash": "50bdcbbc1a728904b0ce8ad9846033e9",
+    "semantic_hash": "50bdcbbc1a728904b0ce8ad9846033e9"
+  },
+  "why_is_list_multiply_faster/tests/test_main.py": {
+    "mtime": 1768444517.6452632,
+    "seen": 1794589536.6561038,
+    "ast_hash": "490b431667e5097168313e34122f628a",
+    "semantic_hash": "490b431667e5097168313e34122f628a"
+  },
+  "README.md": {
+    "mtime": 1791408653.4872787,
+    "seen": 1794589536.6561038,
+    "ast_hash": "3a626812ab827f297609aaa58a04a163",
+    "semantic_hash": "3a626812ab827f297609aaa58a04a163"
+  },
+  "brag-output/brag-plan.md": {
+    "mtime": 1790895823.517294,
+    "seen": 1794589536.656105,
+    "ast_hash": "4713546748f8eb5370190f2e71132e6d",
+    "semantic_hash": "4713546748f8eb5370190f2e71132e6d"
+  },
+  "brag-output/composition-brief.md": {
+    "mtime": 1790895812.348377,
+    "seen": 1794589536.656106,
+    "ast_hash": "510ca2cc2c1683a4c91d0a20a3485efe",
+    "semantic_hash": "510ca2cc2c1683a4c91d0a20a3485efe"
+  },
+  "brag-output/composition/AGENTS.md": {
+    "mtime": 1790895460.9958966,
+    "seen": 1794589536.656106,
+    "ast_hash": "d9d8d4709fa793bf0f3d8635c3f2d648",
+    "semantic_hash": "d9d8d4709fa793bf0f3d8635c3f2d648"
+  },
+  "brag-output/composition/assets/music/cues/happy-beats-business-moves-vol-11-by-ende-dot-app.music-cues.md": {
+    "mtime": 1790895852.2089124,
+    "seen": 1794589536.656107,
+    "ast_hash": "ec337980dc08cd88f5c3c037e0ea5626",
+    "semantic_hash": "ec337980dc08cd88f5c3c037e0ea5626"
+  },
+  "brag-output/composition/index.html": {
+    "mtime": 1790897376.3341558,
+    "seen": 1794589536.656107,
+    "ast_hash": "bb3eb2c1180d8e13a992a6cb9deb765f",
+    "semantic_hash": "bb3eb2c1180d8e13a992a6cb9deb765f"
+  },
+  "brag-output/share-copy-variants.md": {
+    "mtime": 1790897265.6080217,
+    "seen": 1794589536.6561081,
+    "ast_hash": "6cd237c57abe576b9523090e61d02912",
+    "semantic_hash": "6cd237c57abe576b9523090e61d02912"
+  },
+  "how-long-until-dice-match/explained.md": {
+    "mtime": 1768775769.688328,
+    "seen": 1794589536.6561081,
+    "ast_hash": "acf6e7e165f91c38dec5ddb63f5c4279",
+    "semantic_hash": "acf6e7e165f91c38dec5ddb63f5c4279"
+  },
+  "how-long-until-dice-match/logs/3die_20sim_18-01-26_11-06-54.txt": {
+    "mtime": 1768734414.7395735,
+    "seen": 1794589536.656109,
+    "ast_hash": "9069862ef17f29c08afce443a30feb69",
+    "semantic_hash": "9069862ef17f29c08afce443a30feb69"
+  },
+  "why_is_list_multiply_faster/explained.md": {
+    "mtime": 1768445255.6266067,
+    "seen": 1794589536.656109,
+    "ast_hash": "56ace492cb53a81fe8f2d762d06fc3cb",
+    "semantic_hash": "56ace492cb53a81fe8f2d762d06fc3cb"
+  },
+  "brag-output/brag.gif": {
+    "mtime": 1791408300.775742,
+    "seen": 1794589536.65611,
+    "ast_hash": "b712e6bc302382947090a737f2c6b7cd",
+    "semantic_hash": "b712e6bc302382947090a737f2c6b7cd"
+  },
+  "brag-output/brag.jpg": {
+    "mtime": 1790897491.0998497,
+    "seen": 1794589536.65611,
+    "ast_hash": "ec2b5345a2bbd4e59162fadb136ebc22",
+    "semantic_hash": "ec2b5345a2bbd4e59162fadb136ebc22"
+  }
+}

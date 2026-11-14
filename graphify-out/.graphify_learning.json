@@ -1,5 +1,134 @@
 {
-  "generated_at": "2026-11-13T17:13:53.797182+00:00",
-  "nodes": {},
+  "generated_at": "2026-11-14T00:44:32.415649+00:00",
+  "nodes": {
+    "brag_output_brag_plan_music_cue_locks": {
+      "code_fingerprint": "bf939461df4d4b10ffb6bfe32096d5a1f0f325388d0a027c9429a5cf5ff0e986",
+      "label": "Music cue locks (6.34 / 9.50 / 12.65 s)",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "brag-output/brag-plan.md",
+      "status": "tentative",
+      "uses": 1
+    },
+    "brag_output_composition_assets_data": {
+      "code_fingerprint": "278257099966ae8892d00ec4bdac2fc76ef40528528ac0d61ae5730b894b37e9",
+      "label": "data.js",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "brag-output/composition/assets/data.js",
+      "status": "tentative",
+      "uses": 1
+    },
+    "brag_output_composition_brief_registry_catalog_search": {
+      "code_fingerprint": "fe2449fb3e8589f28cc692a771fbb9690e28a570aeaf91e9104b7b180a193fab",
+      "label": "Registry catalog search",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "brag-output/composition-brief.md",
+      "status": "tentative",
+      "uses": 1
+    },
+    "brag_output_composition_brief_tl_set_frame_rows": {
+      "code_fingerprint": "fe2449fb3e8589f28cc692a771fbb9690e28a570aeaf91e9104b7b180a193fab",
+      "label": "Deterministic tl.set frame rows",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "brag-output/composition-brief.md",
+      "status": "tentative",
+      "uses": 1
+    },
+    "brag_output_composition_index_root_timeline": {
+      "code_fingerprint": "3b8c47c6579b5722dd2d316efa05bb8b94e6df58ab282b9d17a735c498c80147",
+      "label": "Paused GSAP root timeline (main)",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "brag-output/composition/index.html",
+      "status": "tentative",
+      "uses": 1
+    },
+    "brag_output_composition_index_s4_seismograph_chart": {
+      "code_fingerprint": "3b8c47c6579b5722dd2d316efa05bb8b94e6df58ab282b9d17a735c498c80147",
+      "label": "s4: seismograph chart",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "brag-output/composition/index.html",
+      "status": "tentative",
+      "uses": 1
+    },
+    "how_long_until_dice_match_logs_5die_200sim_26_01_26_17_40_55": {
+      "code_fingerprint": "bf939461df4d4b10ffb6bfe32096d5a1f0f325388d0a027c9429a5cf5ff0e986",
+      "label": "5die_200sim_26-01-26_17-40-55.txt",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "brag-output/brag-plan.md",
+      "status": "tentative",
+      "uses": 1
+    },
+    "how_long_until_dice_match_main_iterations_to_match": {
+      "code_fingerprint": "b1932bad91dd5e2dfbd10cb0dc2cc7c5c02698adf4e28c7d3b5045a7c2f89456",
+      "label": "iterations_to_match()",
+      "last": "2026-11-13T17:15:25.571011+00:00",
+      "provenance": [
+        {
+          "date": "2026-11-13T17:15:25.571011+00:00",
+          "outcome": "useful",
+          "q": "Why does s4: seismograph chart connect Dice Stats & Lab Design to Brag Video Production, Dice Match Simulation, HyperFrames Timeline Config?"
+        }
+      ],
+      "score": 0.992819833,
+      "source_file": "how-long-until-dice-match/main.py",
+      "status": "tentative",
+      "uses": 1
+    }
+  },
   "version": 1
 }

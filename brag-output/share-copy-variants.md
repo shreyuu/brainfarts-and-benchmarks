@@ -8,7 +8,7 @@ Wrote 220 pytest cases to settle `nums * 2` vs `nums + nums`.
 github.com/shreyuu/brainfarts-and-benchmarks
 
 ## Probability angle
-Expected value: 1,296 rolls. Median run: 865. 131 of 200 runs beat the average.
+Expected value: 1,296 rolls. Median run: 861.5. 131 of 200 runs beat the average.
 Expected value ≠ typical experience.
 github.com/shreyuu/brainfarts-and-benchmarks
 

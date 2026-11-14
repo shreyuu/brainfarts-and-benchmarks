@@ -78,10 +78,10 @@
     "semantic_hash": "3a626812ab827f297609aaa58a04a163"
   },
   "brag-output/brag-plan.md": {
-    "mtime": 1790895823.517294,
-    "seen": 1794589536.656105,
-    "ast_hash": "4713546748f8eb5370190f2e71132e6d",
-    "semantic_hash": "4713546748f8eb5370190f2e71132e6d"
+    "mtime": 1794619201.676978,
+    "seen": 1794620029.004517,
+    "ast_hash": "c427839e37afa757089c842e12cb618c",
+    "semantic_hash": "c427839e37afa757089c842e12cb618c"
   },
   "brag-output/composition-brief.md": {
     "mtime": 1790895812.348377,
@@ -108,10 +108,10 @@
     "semantic_hash": "bb3eb2c1180d8e13a992a6cb9deb765f"
   },
   "brag-output/share-copy-variants.md": {
-    "mtime": 1790897265.6080217,
-    "seen": 1794589536.6561081,
-    "ast_hash": "6cd237c57abe576b9523090e61d02912",
-    "semantic_hash": "6cd237c57abe576b9523090e61d02912"
+    "mtime": 1794619201.9646177,
+    "seen": 1794620029.004517,
+    "ast_hash": "e2ac8f0f35a89b73f6ce282c1bc9035c",
+    "semantic_hash": "e2ac8f0f35a89b73f6ce282c1bc9035c"
   },
   "how-long-until-dice-match/explained.md": {
     "mtime": 1768775769.688328,
@@ -142,5 +142,17 @@
     "seen": 1794589536.65611,
     "ast_hash": "ec2b5345a2bbd4e59162fadb136ebc22",
     "semantic_hash": "ec2b5345a2bbd4e59162fadb136ebc22"
+  },
+  "graphify-out/memory/query_20261113_171525_why_does_s4__seismograph_chart_connect_dice_stats.md": {
+    "mtime": 1794590125.5715473,
+    "seen": 1794620029.0045178,
+    "ast_hash": "cc5a67cf58dd981097abd002ac4e7e37",
+    "semantic_hash": "cc5a67cf58dd981097abd002ac4e7e37"
+  },
+  "graphify-out/memory/query_20261114_004624_trace_s3__terminal_run___roll_counter___how_does_i.md": {
+    "mtime": 1794617184.1267965,
+    "seen": 1794620029.004519,
+    "ast_hash": "b39294db69dab5e8f7f41be7b137afe5",
+    "semantic_hash": "b39294db69dab5e8f7f41be7b137afe5"
   }
 }

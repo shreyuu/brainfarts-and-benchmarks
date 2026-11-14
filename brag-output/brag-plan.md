@@ -135,7 +135,7 @@ Total: 3.0 + 3.2 + 4.2 + 5.0 + 3.4 + 4.2 = **23.0s**
 
 ## Source material & real numbers (all verified from the repo)
 - Run: `how-long-until-dice-match/logs/5die_200sim_26-01-26_17-40-55.txt` — 200 simulations, 5 dice, 26,243 lines, 4.1 MB
-- Total rolls: 257,518 (1,287,590 individual dice); average 1,287.59; median 865; 131/200 runs finished under 1,296
+- Total rolls: 257,518 (1,287,590 individual dice); average 1,287.59; median 861.5; 131/200 runs finished under 1,296
 - Sim 1: first roll `[3, 2, 1, 1, 3]`, matched `[1, 1, 1, 1, 1]` after 769
 - Sim 98: `[5, 6, 1, 4, 2]` → `[6, 6, 6, 6, 6]` — 2 rolls (min)
 - Sim 155: 8,738 rolls, ended `[2, 2, 2, 2, 2]` (max)
